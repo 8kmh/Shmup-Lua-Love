@@ -25,6 +25,12 @@ table.insert(level, {0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 3, 3, 0, 0, 0})
 table.insert(level, {0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 3, 3, 0, 0, 0})
 table.insert(level, {0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 3, 3, 0, 0, 0})
 
+-- Camera
+
+camera = {}
+
+camera.y = 0
+
 -- Tiles Img
 tilesImg = {}
 
@@ -92,9 +98,15 @@ function startGame()
     heros.y = height - (heros.height * 2)
     createAlien("1", width / 2, 100)
     createAlien("2", width / 2, 50)
+
+    -- reset camera
+    camera.y = 0
 end
 
 function love.update(dt)
+    -- Move camera
+    camera.y = camera.y + 1
+
     local n
     for n = #listShoots, 1, -1 do
         local shoot = listShoots[n]
@@ -147,9 +159,9 @@ function love.draw()
     local x, y
 
     x = 0
-    y = 0
+    y = (0 - 64) + camera.y
 
-    for line = 1, nbLine do
+    for line = nbLine, 1, -1 do
         for column = 1, 16 do
             -- Draw the tile
             local tile = level[line][column]
@@ -160,7 +172,7 @@ function love.draw()
             x = x + 64
         end
         x = 0
-        y = y + 64
+        y = y - 64
     end
 
     -------------------------------
