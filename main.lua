@@ -10,6 +10,29 @@ listSprites = {}
 listShoots = {}
 listAliens = {}
 
+-- Level 16x12
+level = {}
+table.insert(level, {0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+table.insert(level, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0})
+table.insert(level, {0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 3, 3, 0, 0, 0})
+table.insert(level, {0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 3, 3, 0, 0, 0})
+table.insert(level, {0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 3, 3, 0, 0, 0})
+
+-- Tiles Img
+tilesImg = {}
+
+local n
+for n = 1, 3 do
+    tilesImg[n] = love.graphics.newImage("img/tuile_" .. n .. ".png")
+end
+
 soundShoot = love.audio.newSource("sound/shoot.wav", "static")
 
 function createAlien(pType, pX, pY)
@@ -118,6 +141,29 @@ function love.update(dt)
 end
 
 function love.draw()
+    -- Draw the level
+    local nbLine = #level
+    local line, column
+    local x, y
+
+    x = 0
+    y = 0
+
+    for line = 1, nbLine do
+        for column = 1, 16 do
+            -- Draw the tile
+            local tile = level[line][column]
+            if level[line][column] > 0 then
+                love.graphics.draw(tilesImg[tile], x, y, 0, 2, 2)
+            end
+
+            x = x + 64
+        end
+        x = 0
+        y = y + 64
+    end
+
+    -------------------------------
     local n
     for n = 1, #listSprites do
         local s = listSprites[n]
