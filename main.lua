@@ -2,13 +2,41 @@
 love.graphics.setDefaultFilter("nearest")
 
 heros = {}
-sprites = {}
-shoots = {}
 
-heros.x = 0
-heros.y = 0
+math.randomseed(love.timer.getTime())
+
+-- List
+listSprites = {}
+listShoots = {}
+listAliens = {}
 
 soundShoot = love.audio.newSource("sound/shoot.wav", "static")
+
+function createAlien(pType, pX, pY)
+    local imgName = ""
+    if pType == "1" then
+        imgName = "enemy1"
+    elseif pType == "2" then
+        imgName = "enemy2"
+    end
+
+    local alien = createSprite(imgName, pX, pY)
+
+    if pType == "1" then
+        alien.vY = 2
+        alien.vX = 0
+    elseif pType == "2" then
+        alien.vY = 2
+        local direction = math.random(1, 2)
+        if direction == 1 then
+            alien.vX = 1
+        else
+            alien.vX = -1
+        end
+    end
+
+    table.insert(listAliens, alien)
+end
 
 function createSprite(pImgName, pX, pY)
     sprite = {}
@@ -19,7 +47,7 @@ function createSprite(pImgName, pX, pY)
     sprite.width = sprite.img:getWidth()
     sprite.height = sprite.img:getHeight()
 
-    table.insert(sprites, sprite)
+    table.insert(listSprites, sprite)
 
     return sprite
 end
@@ -32,25 +60,45 @@ function love.load()
     height = love.graphics.getHeight()
 
     heros = createSprite("heros", width / 2, height / 2)
+
+    startGame()
+end
+
+function startGame()
+    heros.x = width / 2
     heros.y = height - (heros.height * 2)
+    createAlien("1", width / 2, 100)
+    createAlien("2", width / 2, 50)
 end
 
 function love.update(dt)
     local n
-    for n = #shoots, 1, -1 do
-        local shoot = shoots[n]
+    for n = #listShoots, 1, -1 do
+        local shoot = listShoots[n]
         shoot.y = shoot.y + shoot.speed
 
         -- check if the shoot is in the screen
         if shoot.y < 0 or shoot.y > height then
             shoot.delete = true
-            table.remove(shoots, n)
+            table.remove(listShoots, n)
         end
     end
 
-    for n = #sprites, 1, -1 do
-        if sprites[n].delete == true then
-            table.remove(sprites, n)
+    -- Aliens
+    for n = #listAliens, 1, -1 do
+        local alien = listAliens[n]
+        alien.x = alien.x + alien.vX
+        alien.y = alien.y + alien.vY
+
+        if alien.y > height then
+            alien.delete = true
+            table.remove(listAliens, n)
+        end
+    end
+    ---------------------------------
+    for n = #listSprites, 1, -1 do
+        if listSprites[n].delete == true then
+            table.remove(listSprites, n)
         end
     end
 
@@ -71,19 +119,19 @@ end
 
 function love.draw()
     local n
-    for n = 1, #sprites do
-        local s = sprites[n]
+    for n = 1, #listSprites do
+        local s = listSprites[n]
         love.graphics.draw(s.img, s.x, s.y, 0, 2, 2, s.width / 2, s.height / 2)
     end
 
-    love.graphics.print("shoot " .. #shoots, 0, 0)
+    love.graphics.print("shoot = " .. #listShoots .. " Sprites = " .. #listSprites .. "Aliens = " .. #listAliens, 0, 0)
 end
 
 function love.keypressed(key)
     if key == "space" then
         local shoot = createSprite("laser1", heros.x, heros.y - (heros.height * 2) / 2)
         shoot.speed = -10
-        table.insert(shoots, shoot)
+        table.insert(listShoots, shoot)
 
         soundShoot:play()
     end
