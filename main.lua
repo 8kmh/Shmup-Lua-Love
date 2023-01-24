@@ -27,9 +27,9 @@ table.insert(level, {0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 3, 3, 3, 0, 0, 0})
 
 -- Camera
 
-camera = {}
-
-camera.y = 0
+camera = {
+    y = 0
+}
 
 -- Tiles Img
 tilesImg = {}
